@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DEX COMMAND CENTER</title>
+<link href="https://fonts.googleapis.com/css2?family=Michroma&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0a0e17;--card:#111827;--border:#1e293b;--cyan:#00e5ff;--cyan-dim:#00e5ff33;--green:#22c55e;--red:#ef4444;--yellow:#eab308;--text:#e2e8f0;--text-dim:#64748b;--font:'Inter',sans-serif}
+body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:100vh;padding:1rem}
+.glow{text-shadow:0 0 10px var(--cyan),0 0 30px var(--cyan-dim)}
+header{text-align:center;padding:1.5rem 0 1rem;border-bottom:1px solid var(--border);margin-bottom:1.5rem}
+header h1{font-family:'Michroma',sans-serif;font-size:clamp(1.2rem,4vw,2rem);color:var(--cyan);letter-spacing:.3em}
+header .subtitle{color:var(--text-dim);font-size:.75rem;margin-top:.4rem}
+.updated{text-align:center;color:var(--text-dim);font-size:.7rem;margin-bottom:1.5rem}
+h2{font-family:'Michroma',sans-serif;font-size:.85rem;color:var(--cyan);letter-spacing:.15em;margin-bottom:.75rem;display:flex;align-items:center;gap:.5rem}
+h2 .icon{font-size:1rem}
+.grid{display:grid;gap:.75rem;margin-bottom:1.5rem}
+.grid-5{grid-template-columns:repeat(auto-fit,minmax(180px,1fr))}
+.grid-2{grid-template-columns:repeat(auto-fit,minmax(280px,1fr))}
+.grid-4{grid-template-columns:repeat(auto-fit,minmax(140px,1fr))}
+.card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:1rem;position:relative;transition:border-color .2s}
+.card:hover{border-color:var(--cyan-dim)}
+.card .name{font-weight:600;font-size:.85rem;margin-bottom:.25rem}
+.card .meta{color:var(--text-dim);font-size:.7rem}
+.status{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px;vertical-align:middle}
+.status.on{background:var(--green);box-shadow:0 0 6px var(--green)}
+.status.off{background:var(--red);box-shadow:0 0 6px var(--red)}
+.badge{display:inline-block;font-size:.6rem;padding:2px 8px;border-radius:99px;font-weight:600;text-transform:uppercase;letter-spacing:.05em}
+.badge.active{background:#22c55e22;color:var(--green);border:1px solid #22c55e44}
+.badge.paused{background:#eab30822;color:var(--yellow);border:1px solid #eab30844}
+.campaign-stats{display:flex;gap:1rem;margin-top:.6rem;flex-wrap:wrap}
+.campaign-stats .stat{text-align:center}
+.campaign-stats .stat .val{font-size:1.1rem;font-weight:600;color:var(--cyan)}
+.campaign-stats .stat .label{font-size:.6rem;color:var(--text-dim);text-transform:uppercase}
+.pipeline .card{text-align:center}
+.pipeline .val{font-size:1.5rem;font-weight:700;color:var(--cyan)}
+.pipeline .label{font-size:.7rem;color:var(--text-dim);text-transform:uppercase;margin-top:.25rem}
+.feed{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:1rem;max-height:220px;overflow-y:auto;margin-bottom:1.5rem}
+.feed-item{padding:.4rem 0;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;font-size:.78rem}
+.feed-item:last-child{border:none}
+.feed-item .time{color:var(--text-dim);font-size:.65rem;white-space:nowrap;margin-left:.5rem}
+.cron-table{width:100%;border-collapse:collapse;font-size:.72rem}
+.cron-table th{text-align:left;color:var(--text-dim);font-weight:500;padding:.4rem .5rem;border-bottom:1px solid var(--border);text-transform:uppercase;font-size:.6rem;letter-spacing:.05em}
+.cron-table td{padding:.4rem .5rem;border-bottom:1px solid var(--border)}
+.cron-wrap{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:1rem;overflow-x:auto;margin-bottom:1.5rem}
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+@media(max-width:600px){body{padding:.5rem}.grid-5{grid-template-columns:1fr 1fr}.campaign-stats .stat .val{font-size:.9rem}}
+</style>
+</head>
+<body>
+
+<header>
+<h1 class="glow">DEX COMMAND CENTER</h1>
+<div class="subtitle">Dextor AI — Mission Control</div>
+</header>
+<div class="updated" id="lastUpdated"></div>
+
+<!-- BOTS & AGENTS -->
+<h2><span class="icon">🤖</span> Bots & Agents</h2>
+<div class="grid grid-5" id="botsGrid"></div>
+
+<!-- CAMPAIGNS -->
+<h2><span class="icon">📧</span> Campaigns</h2>
+<div class="grid grid-2" id="campaignsGrid"></div>
+
+<!-- PIPELINE -->
+<h2><span class="icon">📊</span> Pipeline</h2>
+<div class="grid grid-4 pipeline" id="pipelineGrid"></div>
+
+<!-- CRON JOBS -->
+<h2><span class="icon">🕐</span> Cron Jobs</h2>
+<div class="cron-wrap"><table class="cron-table" id="cronTable"></table></div>
+
+<!-- LIVE ACTIVITY FEED -->
+<h2><span class="icon">⚡</span> Live Activity Feed</h2>
+<div class="feed" id="activityFeed"></div>
+
+<script>
+// ═══════════════════════════════════════════════════
+// STATIC DATA — Replace with API calls when ready
+// ═══════════════════════════════════════════════════
+
+const bots = [
+  { name: 'Dexter', desc: 'Retell AI Inbound', phone: '(832) 384-9727', online: true },
+  { name: 'Dextor AI', desc: 'Outbound SDR', online: true },
+  { name: 'ClearMeds', desc: 'Inbound Sales', online: true },
+  { name: 'SkimShady', desc: 'Discord Bot', online: true },
+  { name: 'OpenClaw', desc: 'AI Assistant', online: true },
+];
+
+const campaigns = [
+  { name: 'Dextor AI Email Campaign', status: 'active', leads: 511, sent: 1243, openRate: '42%', replyRate: '8.3%' },
+  { name: 'ClearMeds Email Campaign', status: 'active', leads: 0, sent: 0, openRate: '—', replyRate: '—' },
+  // TODO: Wire up Instantly / Smartlead API
+];
+
+const pipeline = [
+  { label: 'Total Leads', value: '511' },
+  { label: 'Warm Leads', value: '38' },
+  { label: 'Booked Meetings', value: '12' },
+  { label: 'Monthly Revenue', value: '$4.2k' },
+  // TODO: Wire up CRM API
+];
+
+const cronJobs = [
+  { name: 'Daily Peptide Intel', schedule: '8:00 AM', lastRun: 'Today 8:00 AM', nextRun: 'Tomorrow 8:00 AM', status: 'on' },
+  { name: 'Daily AI Intel', schedule: '8:30 AM', lastRun: 'Today 8:30 AM', nextRun: 'Tomorrow 8:30 AM', status: 'on' },
+  { name: 'NMN Reminder', schedule: '9:00 AM', lastRun: 'Today 9:00 AM', nextRun: 'Tomorrow 9:00 AM', status: 'on' },
+  { name: 'Selank Reminder', schedule: '9:00 AM', lastRun: 'Today 9:00 AM', nextRun: 'Tomorrow 9:00 AM', status: 'on' },
+  { name: 'ClawdCursor Mac Check', schedule: 'Every 30m', lastRun: 'Today 4:30 PM', nextRun: 'Today 5:00 PM', status: 'on' },
+];
+
+const activityFeed = [
+  { text: 'Dexter answered inbound call from (713) area code', time: '4:42 PM' },
+  { text: 'SkimShady found 3 trading opportunities', time: '4:38 PM' },
+  { text: 'Email campaign sent 25 emails (Dextor AI)', time: '4:30 PM' },
+  { text: 'OpenClaw completed daily AI intel report', time: '8:30 AM' },
+  { text: 'Daily Peptide Intel delivered to Discord', time: '8:00 AM' },
+  { text: 'ClearMeds bot handled inbound inquiry', time: 'Yesterday 6:12 PM' },
+  { text: 'SkimShady executed 2 trades on paper account', time: 'Yesterday 3:45 PM' },
+  // TODO: Wire up real-time webhook / event stream
+];
+
+// ═══════════════════════════════════════════════════
+// RENDER
+// ═══════════════════════════════════════════════════
+
+function render() {
+  // Last Updated
+  document.getElementById('lastUpdated').textContent = 'Last Updated: ' + new Date().toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' });
+
+  // Bots
+  document.getElementById('botsGrid').innerHTML = bots.map(b => `
+    <div class="card">
+      <div class="name"><span class="status ${b.online?'on':'off'}"></span>${b.name}</div>
+      <div class="meta">${b.desc}${b.phone ? '<br>' + b.phone : ''}</div>
+    </div>`).join('');
+
+  // Campaigns
+  document.getElementById('campaignsGrid').innerHTML = campaigns.map(c => `
+    <div class="card">
+      <div class="name">${c.name} <span class="badge ${c.status}">${c.status}</span></div>
+      <div class="campaign-stats">
+        <div class="stat"><div class="val">${c.leads}</div><div class="label">Leads</div></div>
+        <div class="stat"><div class="val">${c.sent}</div><div class="label">Sent</div></div>
+        <div class="stat"><div class="val">${c.openRate}</div><div class="label">Open Rate</div></div>
+        <div class="stat"><div class="val">${c.replyRate}</div><div class="label">Reply Rate</div></div>
+      </div>
+    </div>`).join('');
+
+  // Pipeline
+  document.getElementById('pipelineGrid').innerHTML = pipeline.map(p => `
+    <div class="card"><div class="val">${p.value}</div><div class="label">${p.label}</div></div>`).join('');
+
+  // Cron
+  document.getElementById('cronTable').innerHTML = `
+    <tr><th>Task</th><th>Schedule</th><th>Last Run</th><th>Next Run</th><th>Status</th></tr>
+    ${cronJobs.map(j => `<tr>
+      <td>${j.name}</td><td>${j.schedule}</td><td>${j.lastRun}</td><td>${j.nextRun}</td>
+      <td><span class="status ${j.status}"></span></td>
+    </tr>`).join('')}`;
+
+  // Feed
+  document.getElementById('activityFeed').innerHTML = activityFeed.map(f => `
+    <div class="feed-item"><span>${f.text}</span><span class="time">${f.time}</span></div>`).join('');
+}
+
+render();
+// Auto-refresh every 60 seconds (will matter once live data is wired up)
+setInterval(render, 60000);
+</script>
+</body>
+</html>
