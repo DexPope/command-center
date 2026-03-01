@@ -27,9 +27,11 @@ h2 .icon{font-size:1rem}
 .status{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px;vertical-align:middle}
 .status.on{background:var(--green);box-shadow:0 0 6px var(--green)}
 .status.off{background:var(--red);box-shadow:0 0 6px var(--red)}
+.status.unknown{background:var(--yellow);box-shadow:0 0 6px var(--yellow)}
 .badge{display:inline-block;font-size:.6rem;padding:2px 8px;border-radius:99px;font-weight:600;text-transform:uppercase;letter-spacing:.05em}
 .badge.active{background:#22c55e22;color:var(--green);border:1px solid #22c55e44}
 .badge.paused{background:#eab30822;color:var(--yellow);border:1px solid #eab30844}
+.badge.cors{background:#ef444422;color:var(--red);border:1px solid #ef444444;font-size:.55rem}
 .campaign-stats{display:flex;gap:1rem;margin-top:.6rem;flex-wrap:wrap}
 .campaign-stats .stat{text-align:center}
 .campaign-stats .stat .val{font-size:1.1rem;font-weight:600;color:var(--cyan)}
@@ -37,6 +39,21 @@ h2 .icon{font-size:1rem}
 .pipeline .card{text-align:center}
 .pipeline .val{font-size:1.5rem;font-weight:700;color:var(--cyan)}
 .pipeline .label{font-size:.7rem;color:var(--text-dim);text-transform:uppercase;margin-top:.25rem}
+/* To-Do List */
+.todo-wrap{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:1rem;margin-bottom:1.5rem}
+.todo-input{display:flex;gap:.5rem;margin-bottom:.75rem}
+.todo-input input{flex:1;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:.5rem .75rem;color:var(--text);font-family:var(--font);font-size:.8rem;outline:none}
+.todo-input input:focus{border-color:var(--cyan)}
+.todo-input button{background:var(--cyan);color:var(--bg);border:none;border-radius:6px;padding:.5rem 1rem;font-family:var(--font);font-weight:600;font-size:.8rem;cursor:pointer}
+.todo-input button:hover{opacity:.85}
+.todo-item{display:flex;align-items:center;gap:.5rem;padding:.4rem 0;border-bottom:1px solid var(--border);font-size:.8rem}
+.todo-item:last-child{border:none}
+.todo-item input[type=checkbox]{accent-color:var(--cyan);cursor:pointer;width:16px;height:16px;flex-shrink:0}
+.todo-item .todo-text{flex:1}
+.todo-item.done .todo-text{text-decoration:line-through;color:var(--text-dim)}
+.todo-item .todo-del{background:none;border:none;color:var(--text-dim);cursor:pointer;font-size:.9rem;padding:0 .25rem;line-height:1}
+.todo-item .todo-del:hover{color:var(--red)}
+/* Feed & Cron */
 .feed{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:1rem;max-height:220px;overflow-y:auto;margin-bottom:1.5rem}
 .feed-item{padding:.4rem 0;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;font-size:.78rem}
 .feed-item:last-child{border:none}
@@ -48,7 +65,7 @@ h2 .icon{font-size:1rem}
 ::-webkit-scrollbar{width:4px}
 ::-webkit-scrollbar-track{background:transparent}
 ::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
-@media(max-width:600px){body{padding:.5rem}.grid-5{grid-template-columns:1fr 1fr}.campaign-stats .stat .val{font-size:.9rem}}
+@media(max-width:600px){body{padding:.5rem}.grid-5{grid-template-columns:1fr 1fr}.campaign-stats .stat .val{font-size:.9rem}.todo-input{flex-direction:column}.todo-input button{width:100%}}
 </style>
 </head>
 <body>
@@ -71,6 +88,16 @@ h2 .icon{font-size:1rem}
 <h2><span class="icon">📊</span> Pipeline</h2>
 <div class="grid grid-4 pipeline" id="pipelineGrid"></div>
 
+<!-- TO-DO LIST -->
+<h2><span class="icon">📋</span> To-Do List</h2>
+<div class="todo-wrap">
+  <div class="todo-input">
+    <input type="text" id="todoInput" placeholder="Add a task…" onkeydown="if(event.key==='Enter')addTodo()">
+    <button onclick="addTodo()">Add</button>
+  </div>
+  <div id="todoList"></div>
+</div>
+
 <!-- CRON JOBS -->
 <h2><span class="icon">🕐</span> Cron Jobs</h2>
 <div class="cron-wrap"><table class="cron-table" id="cronTable"></table></div>
@@ -81,21 +108,45 @@ h2 .icon{font-size:1rem}
 
 <script>
 // ═══════════════════════════════════════════════════
-// STATIC DATA — Replace with API calls when ready
+// API KEYS (client-side exposed — acceptable for now)
 // ═══════════════════════════════════════════════════
+const RETELL_API_KEY = 'key_0a394250d1a4545379a009c50d04';
+const RETELL_BASE = 'https://api.retellai.com';
+const INSTANTLY_API_KEY = 'ODlmYTNjZGYtMDE4NC00NGM0LTk0ODYtZmEwMjQ1ODJmNTdiOmJkTVlwYVh5c2NCQg==';
+const INSTANTLY_BASE = 'https://api.instantly.ai/api/v2';
 
-const bots = [
-  { name: 'Dexter', desc: 'Retell AI Inbound', phone: '(832) 384-9727', online: true },
-  { name: 'Dextor AI', desc: 'Outbound SDR', online: true },
-  { name: 'ClearMeds', desc: 'Inbound Sales', online: true },
-  { name: 'SkimShady', desc: 'Discord Bot', online: true },
+// Agent ID mapping
+const RETELL_AGENTS = {
+  'agent_6d7ecea230024748b9839fa6e0': { name: 'Dextor AI Inbound', desc: 'Retell AI Inbound', phone: '(832) 384-9727' },
+  'agent_8840b578de3bc5dd85fcc02f79': { name: 'ClearMeds Inbound', desc: 'Retell AI Inbound' },
+  'agent_4ff4f9762b9e253f3c4fd1e1c5': { name: 'Outbound SDR', desc: 'Retell AI Outbound' },
+  'agent_e348d337796e0fadc1a35e4af7': { name: 'Outbound Cold Call', desc: 'Retell AI Outbound' },
+};
+
+const INSTANTLY_CAMPAIGNS = {
+  'ec705770-ed1f-41e7-b8ba-432c0bfba920': 'Dextor AI Email Campaign',
+  'f464092e-dbe6-4671-b5c5-892815ff933f': 'ClearMeds Email Campaign',
+};
+
+// ═══════════════════════════════════════════════════
+// LIVE DATA STATE
+// ═══════════════════════════════════════════════════
+let lastSynced = null;
+
+// Bots — start with defaults, overwritten by API
+let bots = [
+  { name: 'Dextor AI Inbound', desc: 'Retell AI Inbound', phone: '(832) 384-9727', online: true },
+  { name: 'ClearMeds Inbound', desc: 'Retell AI Inbound', online: true },
+  { name: 'Outbound SDR', desc: 'Retell AI Outbound', online: true },
+  { name: 'Outbound Cold Call', desc: 'Retell AI Outbound', online: true },
+  { name: 'SkimShady', desc: 'Discord Bot · Status via heartbeat (coming soon)', online: true },
   { name: 'OpenClaw', desc: 'AI Assistant', online: true },
 ];
 
-const campaigns = [
-  { name: 'Dextor AI Email Campaign', status: 'active', leads: 511, sent: 1243, openRate: '42%', replyRate: '8.3%' },
-  { name: 'ClearMeds Email Campaign', status: 'active', leads: 0, sent: 0, openRate: '—', replyRate: '—' },
-  // TODO: Wire up Instantly / Smartlead API
+// Campaigns — static fallback
+let campaigns = [
+  { name: 'Dextor AI Email Campaign', status: 'active', sent: 1243, opens: '42%', replies: '8.3%', cors: false },
+  { name: 'ClearMeds Email Campaign', status: 'active', sent: 0, opens: '—', replies: '—', cors: false },
 ];
 
 const pipeline = [
@@ -103,7 +154,6 @@ const pipeline = [
   { label: 'Warm Leads', value: '38' },
   { label: 'Booked Meetings', value: '12' },
   { label: 'Monthly Revenue', value: '$4.2k' },
-  // TODO: Wire up CRM API
 ];
 
 const cronJobs = [
@@ -122,16 +172,156 @@ const activityFeed = [
   { text: 'Daily Peptide Intel delivered to Discord', time: '8:00 AM' },
   { text: 'ClearMeds bot handled inbound inquiry', time: 'Yesterday 6:12 PM' },
   { text: 'SkimShady executed 2 trades on paper account', time: 'Yesterday 3:45 PM' },
-  // TODO: Wire up real-time webhook / event stream
 ];
+
+// ═══════════════════════════════════════════════════
+// API FETCHING
+// ═══════════════════════════════════════════════════
+
+async function fetchRetellAgents() {
+  try {
+    const res = await fetch(RETELL_BASE + '/list-agents', {
+      headers: { 'Authorization': 'Bearer ' + RETELL_API_KEY }
+    });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const agents = await res.json();
+    // Build new bots array from API data
+    const apiBots = [];
+    for (const [id, info] of Object.entries(RETELL_AGENTS)) {
+      const agent = agents.find(a => a.agent_id === id);
+      apiBots.push({
+        name: info.name,
+        desc: info.desc,
+        phone: info.phone || '',
+        online: agent ? true : true, // agent exists = configured
+      });
+    }
+    // Keep static bots (SkimShady, OpenClaw)
+    bots = [
+      ...apiBots,
+      { name: 'SkimShady', desc: 'Discord Bot · Status via heartbeat (coming soon)', online: true },
+      { name: 'OpenClaw', desc: 'AI Assistant', online: true },
+    ];
+  } catch (e) {
+    console.warn('Retell API fetch failed:', e.message);
+    // Keep existing static data
+  }
+}
+
+// TODO: Set up a serverless proxy (e.g. Cloudflare Worker) to avoid CORS issues
+async function fetchInstantlyCampaigns() {
+  const newCampaigns = [];
+  for (const [id, name] of Object.entries(INSTANTLY_CAMPAIGNS)) {
+    try {
+      const res = await fetch(INSTANTLY_BASE + '/campaigns/' + id + '/analytics', {
+        headers: { 'Authorization': 'Bearer ' + INSTANTLY_API_KEY }
+      });
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      const data = await res.json();
+      newCampaigns.push({
+        name,
+        status: data.status || 'active',
+        sent: data.emails_sent || data.sent || 0,
+        opens: data.open_rate ? data.open_rate + '%' : (data.opens || '—'),
+        replies: data.reply_rate ? data.reply_rate + '%' : (data.replies || '—'),
+        cors: false,
+      });
+    } catch (e) {
+      console.warn('Instantly API fetch failed for ' + name + ':', e.message);
+      // CORS or other error — use fallback with note
+      const fallback = campaigns.find(c => c.name === name);
+      newCampaigns.push({
+        name,
+        status: fallback ? fallback.status : 'active',
+        sent: fallback ? fallback.sent : 0,
+        opens: fallback ? fallback.opens : '—',
+        replies: fallback ? fallback.replies : '—',
+        cors: true,
+      });
+    }
+  }
+  campaigns = newCampaigns;
+}
+
+async function fetchAllData() {
+  await Promise.all([fetchRetellAgents(), fetchInstantlyCampaigns()]);
+  lastSynced = new Date();
+  render();
+}
+
+// ═══════════════════════════════════════════════════
+// TO-DO LIST (localStorage)
+// ═══════════════════════════════════════════════════
+
+const TODO_KEY = 'dex-command-center-todos';
+const DEFAULT_TODOS = [
+  'Swap Dextor AI campaign sender to hello@dextor.ai',
+  'Fix Calendly URL (remove mr-chaysewinter slug)',
+  'Post LinkedIn content',
+  'Print and mail ClearMeds letters',
+  'Publish Etsy listings (JUUBXX store)',
+  'Monitor Instantly campaign open rates',
+  'Record female voice for AI agent clone',
+];
+
+function loadTodos() {
+  const saved = localStorage.getItem(TODO_KEY);
+  if (saved) return JSON.parse(saved);
+  // First visit — seed defaults
+  return DEFAULT_TODOS.map((t, i) => ({ id: Date.now() + i, text: t, done: false }));
+}
+
+function saveTodos(todos) {
+  localStorage.setItem(TODO_KEY, JSON.stringify(todos));
+}
+
+function addTodo() {
+  const input = document.getElementById('todoInput');
+  const text = input.value.trim();
+  if (!text) return;
+  const todos = loadTodos();
+  todos.push({ id: Date.now(), text, done: false });
+  saveTodos(todos);
+  input.value = '';
+  renderTodos();
+}
+
+function toggleTodo(id) {
+  const todos = loadTodos();
+  const t = todos.find(x => x.id === id);
+  if (t) t.done = !t.done;
+  saveTodos(todos);
+  renderTodos();
+}
+
+function deleteTodo(id) {
+  const todos = loadTodos().filter(x => x.id !== id);
+  saveTodos(todos);
+  renderTodos();
+}
+
+function renderTodos() {
+  const todos = loadTodos();
+  // Sort: incomplete first, then completed
+  todos.sort((a, b) => a.done - b.done);
+  document.getElementById('todoList').innerHTML = todos.map(t => `
+    <div class="todo-item ${t.done ? 'done' : ''}">
+      <input type="checkbox" ${t.done ? 'checked' : ''} onchange="toggleTodo(${t.id})">
+      <span class="todo-text">${t.text}</span>
+      <button class="todo-del" onclick="deleteTodo(${t.id})">✕</button>
+    </div>`).join('');
+}
 
 // ═══════════════════════════════════════════════════
 // RENDER
 // ═══════════════════════════════════════════════════
 
 function render() {
-  // Last Updated
-  document.getElementById('lastUpdated').textContent = 'Last Updated: ' + new Date().toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' });
+  // Last Updated / Synced
+  const syncStr = lastSynced
+    ? 'Last synced: ' + lastSynced.toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' })
+    : 'Last Updated: ' + new Date().toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' });
+  document.getElementById('lastUpdated').textContent = syncStr;
 
   // Bots
   document.getElementById('botsGrid').innerHTML = bots.map(b => `
@@ -143,12 +333,13 @@ function render() {
   // Campaigns
   document.getElementById('campaignsGrid').innerHTML = campaigns.map(c => `
     <div class="card">
-      <div class="name">${c.name} <span class="badge ${c.status}">${c.status}</span></div>
+      <div class="name">${c.name} <span class="badge ${c.status}">${c.status}</span>
+        ${c.cors ? ' <span class="badge cors">CORS blocked</span>' : ''}
+      </div>
       <div class="campaign-stats">
-        <div class="stat"><div class="val">${c.leads}</div><div class="label">Leads</div></div>
         <div class="stat"><div class="val">${c.sent}</div><div class="label">Sent</div></div>
-        <div class="stat"><div class="val">${c.openRate}</div><div class="label">Open Rate</div></div>
-        <div class="stat"><div class="val">${c.replyRate}</div><div class="label">Reply Rate</div></div>
+        <div class="stat"><div class="val">${c.opens}</div><div class="label">Opens</div></div>
+        <div class="stat"><div class="val">${c.replies}</div><div class="label">Replies</div></div>
       </div>
     </div>`).join('');
 
@@ -167,11 +358,17 @@ function render() {
   // Feed
   document.getElementById('activityFeed').innerHTML = activityFeed.map(f => `
     <div class="feed-item"><span>${f.text}</span><span class="time">${f.time}</span></div>`).join('');
+
+  // Todos
+  renderTodos();
 }
 
+// Initial render + data fetch
 render();
-// Auto-refresh every 60 seconds (will matter once live data is wired up)
-setInterval(render, 60000);
+fetchAllData();
+
+// Auto-refresh every 60 seconds
+setInterval(fetchAllData, 60000);
 </script>
 </body>
 </html>
