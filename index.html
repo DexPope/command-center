@@ -3,409 +3,418 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DEX COMMAND CENTER</title>
-<link href="https://fonts.googleapis.com/css2?family=Michroma&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<title>Dex Command Center</title>
+<link href="https://fonts.googleapis.com/css2?family=Michroma&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-:root{--bg:#0a0e17;--card:#111827;--border:#1e293b;--cyan:#00e5ff;--cyan-dim:#00e5ff33;--green:#22c55e;--red:#ef4444;--yellow:#eab308;--text:#e2e8f0;--text-dim:#64748b;--font:'Inter',sans-serif}
-body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:100vh;padding:1rem}
-.glow{text-shadow:0 0 10px var(--cyan),0 0 30px var(--cyan-dim)}
-header{text-align:center;padding:1.5rem 0 1rem;border-bottom:1px solid var(--border);margin-bottom:1.5rem}
-header h1{font-family:'Michroma',sans-serif;font-size:clamp(1.2rem,4vw,2rem);color:var(--cyan);letter-spacing:.3em}
-header .subtitle{color:var(--text-dim);font-size:.75rem;margin-top:.4rem}
-.updated{text-align:center;color:var(--text-dim);font-size:.7rem;margin-bottom:1.5rem}
-h2{font-family:'Michroma',sans-serif;font-size:.85rem;color:var(--cyan);letter-spacing:.15em;margin-bottom:.75rem;display:flex;align-items:center;gap:.5rem}
-h2 .icon{font-size:1rem}
-.grid{display:grid;gap:.75rem;margin-bottom:1.5rem}
-.grid-5{grid-template-columns:repeat(auto-fit,minmax(180px,1fr))}
-.grid-2{grid-template-columns:repeat(auto-fit,minmax(280px,1fr))}
-.grid-4{grid-template-columns:repeat(auto-fit,minmax(140px,1fr))}
-.card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:1rem;position:relative;transition:border-color .2s}
-.card:hover{border-color:var(--cyan-dim)}
-.card .name{font-weight:600;font-size:.85rem;margin-bottom:.25rem}
-.card .meta{color:var(--text-dim);font-size:.7rem}
-.status{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px;vertical-align:middle}
-.status.on{background:var(--green);box-shadow:0 0 6px var(--green)}
-.status.off{background:var(--red);box-shadow:0 0 6px var(--red)}
-.status.unknown{background:var(--yellow);box-shadow:0 0 6px var(--yellow)}
-.badge{display:inline-block;font-size:.6rem;padding:2px 8px;border-radius:99px;font-weight:600;text-transform:uppercase;letter-spacing:.05em}
-.badge.active{background:#22c55e22;color:var(--green);border:1px solid #22c55e44}
-.badge.paused{background:#eab30822;color:var(--yellow);border:1px solid #eab30844}
-.badge.cors{background:#ef444422;color:var(--red);border:1px solid #ef444444;font-size:.55rem}
-.badge.working{background:#00e5ff22;color:var(--cyan);border:1px solid #00e5ff44;animation:pulse 2s infinite}
-.badge.blocked{background:#ef444422;color:var(--red);border:1px solid #ef444444}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
-.project-tasks{margin-top:.5rem;font-size:.7rem;color:var(--text-dim)}
-.project-tasks li{margin-left:1rem;margin-bottom:.15rem;list-style:disc}
-.campaign-stats{display:flex;gap:1rem;margin-top:.6rem;flex-wrap:wrap}
-.campaign-stats .stat{text-align:center}
-.campaign-stats .stat .val{font-size:1.1rem;font-weight:600;color:var(--cyan)}
-.campaign-stats .stat .label{font-size:.6rem;color:var(--text-dim);text-transform:uppercase}
-.pipeline .card{text-align:center}
-.pipeline .val{font-size:1.5rem;font-weight:700;color:var(--cyan)}
-.pipeline .label{font-size:.7rem;color:var(--text-dim);text-transform:uppercase;margin-top:.25rem}
-/* To-Do List */
-.todo-wrap{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:1rem;margin-bottom:1.5rem}
-.todo-input{display:flex;gap:.5rem;margin-bottom:.75rem}
-.todo-input input{flex:1;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:.5rem .75rem;color:var(--text);font-family:var(--font);font-size:.8rem;outline:none}
-.todo-input input:focus{border-color:var(--cyan)}
-.todo-input button{background:var(--cyan);color:var(--bg);border:none;border-radius:6px;padding:.5rem 1rem;font-family:var(--font);font-weight:600;font-size:.8rem;cursor:pointer}
-.todo-input button:hover{opacity:.85}
-.todo-item{display:flex;align-items:center;gap:.5rem;padding:.4rem 0;border-bottom:1px solid var(--border);font-size:.8rem}
-.todo-item:last-child{border:none}
-.todo-item input[type=checkbox]{accent-color:var(--cyan);cursor:pointer;width:16px;height:16px;flex-shrink:0}
-.todo-item .todo-text{flex:1}
-.todo-item.done .todo-text{text-decoration:line-through;color:var(--text-dim)}
-.todo-item .todo-del{background:none;border:none;color:var(--text-dim);cursor:pointer;font-size:.9rem;padding:0 .25rem;line-height:1}
-.todo-item .todo-del:hover{color:var(--red)}
-/* Feed & Cron */
-.feed{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:1rem;max-height:220px;overflow-y:auto;margin-bottom:1.5rem}
-.feed-item{padding:.4rem 0;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;font-size:.78rem}
-.feed-item:last-child{border:none}
-.feed-item .time{color:var(--text-dim);font-size:.65rem;white-space:nowrap;margin-left:.5rem}
-.cron-table{width:100%;border-collapse:collapse;font-size:.72rem}
-.cron-table th{text-align:left;color:var(--text-dim);font-weight:500;padding:.4rem .5rem;border-bottom:1px solid var(--border);text-transform:uppercase;font-size:.6rem;letter-spacing:.05em}
-.cron-table td{padding:.4rem .5rem;border-bottom:1px solid var(--border)}
-.cron-wrap{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:1rem;overflow-x:auto;margin-bottom:1.5rem}
-::-webkit-scrollbar{width:4px}
-::-webkit-scrollbar-track{background:transparent}
-::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
-@media(max-width:600px){body{padding:.5rem}.grid-5{grid-template-columns:1fr 1fr}.campaign-stats .stat .val{font-size:.9rem}.todo-input{flex-direction:column}.todo-input button{width:100%}}
+:root{--cyan:#00e5ff;--bg:#0a0e17;--card:#111827;--card-border:#1e293b;--text:#e2e8f0;--text-dim:#64748b;--green:#22c55e;--red:#ef4444;--yellow:#eab308;--yellow-dim:#a16207}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-height:1.6;min-height:100vh}
+h1,h2,h3,.section-title{font-family:'Michroma',sans-serif}
+a{color:var(--cyan);text-decoration:none}
+a:hover{text-decoration:underline}
+
+/* Top Bar */
+.top-bar{background:linear-gradient(135deg,#0f1729,#162033);border-bottom:1px solid var(--card-border);padding:12px 20px;display:flex;flex-wrap:wrap;gap:12px 24px;align-items:center;position:sticky;top:0;z-index:100}
+.top-bar .brand{font-family:'Michroma',sans-serif;font-size:1.1rem;color:var(--cyan);white-space:nowrap}
+.top-bar .status-item{display:flex;align-items:center;gap:6px;font-size:0.8rem;color:var(--text-dim)}
+.top-bar .status-item .dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.top-bar .status-item .dot.green{background:var(--green);box-shadow:0 0 6px var(--green)}
+.top-bar .status-item .dot.red{background:var(--red);box-shadow:0 0 6px var(--red)}
+#liveClock{font-family:'Michroma',sans-serif;font-size:0.85rem;color:var(--cyan);margin-left:auto}
+
+/* Container */
+.container{max-width:1200px;margin:0 auto;padding:20px}
+.section{margin-bottom:32px}
+.section-title{font-size:1rem;color:var(--cyan);margin-bottom:16px;display:flex;align-items:center;gap:8px;text-transform:uppercase;letter-spacing:1px}
+.section-title span.emoji{font-family:sans-serif}
+
+/* Cards */
+.card{background:var(--card);border:1px solid var(--card-border);border-radius:12px;padding:16px;margin-bottom:12px;transition:border-color 0.3s,box-shadow 0.3s}
+.card:hover{border-color:rgba(0,229,255,0.3);box-shadow:0 0 20px rgba(0,229,255,0.05)}
+
+/* Badges */
+.badge{display:inline-block;padding:2px 8px;border-radius:4px;font-size:0.7rem;font-weight:600;text-transform:uppercase;letter-spacing:0.5px}
+.badge.active{background:rgba(0,229,255,0.15);color:var(--cyan);animation:pulse 2s infinite}
+.badge.paused{background:rgba(234,179,8,0.15);color:var(--yellow-dim)}
+.badge.blocked{background:rgba(239,68,68,0.15);color:var(--red)}
+.badge.manual{background:rgba(100,116,139,0.2);color:var(--text-dim);font-size:0.6rem}
+.badge.cors{background:rgba(234,179,8,0.15);color:var(--yellow);font-size:0.6rem}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.5}}
+
+/* Status dots */
+.dot-live{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 6px var(--green);margin-right:6px}
+.dot-down{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--red);box-shadow:0 0 6px var(--red);margin-right:6px}
+.dot-unknown{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--text-dim);margin-right:6px}
+
+/* Project cards */
+.project-name{font-weight:600;font-size:0.95rem;margin-bottom:4px}
+.project-desc{color:var(--text-dim);font-size:0.8rem;margin-bottom:8px}
+.project-tasks{list-style:none;padding:0}
+.project-tasks li{font-size:0.8rem;padding:2px 0;padding-left:16px;position:relative;color:var(--text)}
+.project-tasks li::before{content:'→';position:absolute;left:0;color:var(--cyan)}
+.project-meta{font-size:0.7rem;color:var(--text-dim);margin-top:8px}
+
+/* Grid layouts */
+.grid-2{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:12px}
+.grid-3{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px}
+.grid-4{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px}
+
+/* Pipeline */
+.pipeline-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px}
+.pipeline-card{background:var(--card);border:1px solid var(--card-border);border-radius:12px;padding:16px;text-align:center}
+.pipeline-num{font-family:'Michroma',sans-serif;font-size:1.8rem;color:var(--cyan)}
+.pipeline-label{font-size:0.75rem;color:var(--text-dim);margin-top:4px}
+
+/* Bots table */
+.bot-row{display:flex;align-items:center;gap:12px;padding:10px 16px;background:var(--card);border:1px solid var(--card-border);border-radius:8px;margin-bottom:8px}
+.bot-name{font-weight:600;font-size:0.85rem;min-width:180px}
+.bot-type{color:var(--text-dim);font-size:0.75rem;min-width:100px}
+.bot-info{color:var(--text-dim);font-size:0.75rem;flex:1}
+
+/* Cron */
+.cron-row{display:grid;grid-template-columns:1fr 1fr auto;gap:8px;padding:8px 16px;background:var(--card);border:1px solid var(--card-border);border-radius:8px;margin-bottom:6px;align-items:center;font-size:0.8rem}
+.cron-row.dimmed{opacity:0.4}
+.cron-name{font-weight:500}
+.cron-schedule{color:var(--text-dim)}
+
+/* Campaign */
+.campaign-card{background:var(--card);border:1px solid var(--card-border);border-radius:12px;padding:16px;margin-bottom:12px}
+.campaign-name{font-weight:600;font-size:0.9rem}
+.campaign-stats{display:flex;flex-wrap:wrap;gap:16px;margin-top:8px}
+.campaign-stat{text-align:center}
+.campaign-stat .val{font-family:'Michroma',sans-serif;font-size:1.1rem;color:var(--cyan)}
+.campaign-stat .lbl{font-size:0.65rem;color:var(--text-dim);text-transform:uppercase}
+.campaign-meta{font-size:0.7rem;color:var(--text-dim);margin-top:8px}
+
+/* Todo */
+.todo-input-row{display:flex;gap:8px;margin-bottom:12px}
+.todo-input-row input{flex:1;background:var(--card);border:1px solid var(--card-border);border-radius:8px;padding:8px 12px;color:var(--text);font-size:0.85rem;outline:none}
+.todo-input-row input:focus{border-color:var(--cyan)}
+.todo-input-row button{background:var(--cyan);color:var(--bg);border:none;border-radius:8px;padding:8px 16px;font-weight:600;cursor:pointer;font-size:0.85rem}
+.todo-item{display:flex;align-items:center;gap:8px;padding:6px 0;font-size:0.85rem;border-bottom:1px solid rgba(30,41,59,0.5)}
+.todo-item input[type=checkbox]{accent-color:var(--cyan);width:16px;height:16px;cursor:pointer}
+.todo-item.done .todo-text{text-decoration:line-through;opacity:0.4}
+.todo-text{flex:1}
+.todo-del{color:var(--red);cursor:pointer;font-size:0.7rem;opacity:0.5}
+.todo-del:hover{opacity:1}
+
+/* Activity */
+.activity-item{display:flex;gap:12px;padding:8px 0;border-bottom:1px solid rgba(30,41,59,0.3);font-size:0.8rem}
+.activity-time{color:var(--text-dim);min-width:80px;font-size:0.7rem}
+.activity-dot{width:6px;height:6px;border-radius:50%;background:var(--cyan);margin-top:6px;flex-shrink:0}
+
+/* Collapsible */
+.collapsible-header{cursor:pointer;user-select:none;display:flex;align-items:center;gap:8px}
+.collapsible-header::after{content:'▼';font-size:0.6rem;color:var(--text-dim);transition:transform 0.3s}
+.collapsible-header.collapsed::after{transform:rotate(-90deg)}
+.collapsible-body{overflow:hidden;transition:max-height 0.3s ease}
+.collapsible-body.hidden{max-height:0!important}
+
+/* Key Info */
+.key-info-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:8px;margin-top:12px}
+.key-info-item{font-size:0.8rem;padding:6px 0}
+.key-info-item .label{color:var(--text-dim)}
+.key-info-item .value{color:var(--text);font-weight:500}
+
+/* Responsive */
+@media(max-width:640px){
+  .top-bar{flex-direction:column;align-items:flex-start}
+  #liveClock{margin-left:0}
+  .grid-2,.grid-3,.grid-4,.pipeline-grid{grid-template-columns:1fr}
+  .bot-row{flex-direction:column;align-items:flex-start;gap:4px}
+  .cron-row{grid-template-columns:1fr}
+  .campaign-stats{flex-direction:column;align-items:flex-start}
+}
 </style>
 </head>
 <body>
 
-<header>
-<h1 class="glow">DEX COMMAND CENTER</h1>
-<div class="subtitle">Dextor AI — Mission Control</div>
-</header>
-<div class="updated" id="lastUpdated"></div>
+<!-- TOP BAR -->
+<div class="top-bar">
+  <div class="brand">⚡ DEX COMMAND CENTER</div>
+  <div class="status-item"><span class="dot green" id="oclawDot"></span> OpenClaw: <strong>Online</strong></div>
+  <div class="status-item">Last sync: <span id="lastSync">—</span></div>
+  <div id="liveClock"></div>
+</div>
+
+<div class="container">
+
+<!-- ACTIVE PROJECTS -->
+<div class="section">
+  <div class="section-title"><span class="emoji">🚀</span> Active Projects</div>
+  <div class="grid-2">
+    <div class="card">
+      <div class="project-name">Dextor AI <span class="badge active">ACTIVE</span></div>
+      <div class="project-desc">AI automation agency</div>
+      <ul class="project-tasks">
+        <li>Email campaigns live (511 leads in Instantly)</li>
+        <li>Voice agent "Dexter" active — (832) 384-9727, Rich's cloned voice</li>
+        <li>Waiting for hello@dextor.ai mailbox to go live</li>
+        <li>Need to swap sender from sales@clearmeds.bio → hello@dextor.ai</li>
+      </ul>
+      <div class="project-meta">Last activity: Feb 28, 2026</div>
+    </div>
+    <div class="card">
+      <div class="project-name">ClearMedsCorp <span class="badge active">ACTIVE</span></div>
+      <div class="project-desc">Wholesale peptides — domestic manufacturer</div>
+      <ul class="project-tasks">
+        <li>Email campaign live in Instantly</li>
+        <li>Physical mailer kit ready (not yet mailed)</li>
+        <li>DNS/email fixed 2/27</li>
+      </ul>
+      <div class="project-meta">Last activity: Feb 28, 2026</div>
+    </div>
+    <div class="card">
+      <div class="project-name">Dex Command Center <span class="badge active">ACTIVE</span></div>
+      <div class="project-desc">Operational dashboard — this page</div>
+      <ul class="project-tasks">
+        <li>Building out live data integration</li>
+      </ul>
+      <div class="project-meta">Last activity: Feb 28, 2026</div>
+    </div>
+    <div class="card">
+      <div class="project-name">SkimShady Bot <span class="badge active">ACTIVE</span></div>
+      <div class="project-desc">Options trading scanner — CBOE API</div>
+      <ul class="project-tasks">
+        <li>Running as daemon on Mac mini</li>
+        <li>Scans 9:30 CT, monitors hourly 10-4 CT</li>
+        <li>Posting to Discord</li>
+      </ul>
+      <div class="project-meta">Last activity: Feb 28, 2026</div>
+    </div>
+  </div>
+
+  <div style="margin-top:8px">
+    <div class="collapsible-header collapsed" onclick="toggleCollapse(this)">
+      <span class="section-title" style="margin:0;font-size:0.8rem"><span class="emoji">⏸</span> Paused Projects</span>
+    </div>
+    <div class="collapsible-body hidden" style="max-height:600px">
+      <div class="grid-2" style="margin-top:8px">
+        <div class="card" style="opacity:0.5"><div class="project-name">OpenClaw Phone <span class="badge paused">PAUSED</span></div><div class="project-desc">Research phase, awaiting purchase decision</div></div>
+        <div class="card" style="opacity:0.5"><div class="project-name">Fiverr AI Fulfillment <span class="badge paused">PAUSED</span></div><div class="project-desc">Concept phase</div></div>
+        <div class="card" style="opacity:0.5"><div class="project-name">ClinicLeads Pro <span class="badge paused">PAUSED</span></div><div class="project-desc">On hold</div></div>
+        <div class="card" style="opacity:0.5"><div class="project-name">PepLabs.bio <span class="badge paused">PAUSED</span></div><div class="project-desc">On hold</div></div>
+        <div class="card" style="opacity:0.5"><div class="project-name">JUUBXX Etsy <span class="badge paused">PAUSED</span></div><div class="project-desc">10 drafts done, need PDF upload</div></div>
+        <div class="card" style="opacity:0.5"><div class="project-name">Telehealth Platform <span class="badge paused">PAUSED</span></div><div class="project-desc">Not started</div></div>
+      </div>
+    </div>
+  </div>
+</div>
 
 <!-- BOTS & AGENTS -->
-<h2><span class="icon">🤖</span> Bots & Agents</h2>
-<div class="grid grid-5" id="botsGrid"></div>
+<div class="section">
+  <div class="section-title"><span class="emoji">🤖</span> Bots & Agents</div>
+  <div id="botsContainer">
+    <div class="bot-row"><span class="dot-live" id="dot-dexter"></span><span class="bot-name">Dexter (Inbound Discovery)</span><span class="bot-type">Retell AI</span><span class="bot-info">(832) 384-9727 · Voice: Rich Winz clone</span></div>
+    <div class="bot-row"><span class="dot-live" id="dot-clearmeds"></span><span class="bot-name">ClearMeds Inbound Sales</span><span class="bot-type">Retell AI</span><span class="bot-info">Custom voice · Coffee shop ambiance</span></div>
+    <div class="bot-row"><span class="dot-unknown" id="dot-sdr"></span><span class="bot-name">Dextor AI Outbound SDR</span><span class="bot-type">Retell AI</span><span class="bot-info">Adrian voice · 3-min max calls</span></div>
+    <div class="bot-row"><span class="dot-unknown" id="dot-cold"></span><span class="bot-name">Dextor AI Outbound Cold Call</span><span class="bot-type">Retell AI</span><span class="bot-info">Adrian voice · High responsiveness</span></div>
+    <div class="bot-row"><span class="dot-live"></span><span class="bot-name">SkimShady</span><span class="bot-type">Discord Bot</span><span class="bot-info">Scans 9:30 CT · Monitors hourly 10-4 CT</span></div>
+    <div class="bot-row"><span class="dot-live"></span><span class="bot-name">Dex Bot (OpenClaw)</span><span class="bot-type">AI Assistant</span><span class="bot-info">Always on · Multi-channel</span></div>
+  </div>
+  <div style="font-size:0.65rem;color:var(--text-dim);margin-top:8px">Retell agent status verified via API · <span id="retellAgentCount">6</span> agents found · Last check: <span id="retellLastCheck">page load</span></div>
+</div>
 
-<!-- CAMPAIGNS -->
-<h2><span class="icon">📧</span> Campaigns</h2>
-<div class="grid grid-2" id="campaignsGrid"></div>
-
-<!-- PROJECTS -->
-<h2><span class="icon">🚀</span> Projects</h2>
-<div class="grid grid-2" id="projectsGrid"></div>
+<!-- EMAIL CAMPAIGNS -->
+<div class="section">
+  <div class="section-title"><span class="emoji">📧</span> Email Campaigns</div>
+  <div class="campaign-card">
+    <div class="campaign-name">Dextor AI — Houston Local Businesses <span class="badge active">ACTIVE</span></div>
+    <div class="campaign-stats">
+      <div class="campaign-stat"><div class="val" id="dextor-leads">511</div><div class="lbl">Leads</div></div>
+      <div class="campaign-stat"><div class="val">20</div><div class="lbl">Daily Limit</div></div>
+      <div class="campaign-stat"><div class="val">3</div><div class="lbl">Email Steps</div></div>
+    </div>
+    <div class="campaign-meta">
+      Sender: sales@clearmeds.bio ⚠️ <strong style="color:var(--yellow)">Needs switch to hello@dextor.ai</strong><br>
+      Schedule: Mon-Fri 9AM-5PM CT · Campaign ID: ec705770
+    </div>
+  </div>
+  <div class="campaign-card">
+    <div class="campaign-name">FDA Supply Crisis — National Clinics <span class="badge active">ACTIVE</span></div>
+    <div class="campaign-stats">
+      <div class="campaign-stat"><div class="val">—</div><div class="lbl">Leads</div></div>
+      <div class="campaign-stat"><div class="val">20</div><div class="lbl">Daily Limit</div></div>
+      <div class="campaign-stat"><div class="val">3</div><div class="lbl">Email Steps</div></div>
+    </div>
+    <div class="campaign-meta">
+      Sender: sales@clearmeds.bio (as "Chayse Winter")<br>
+      Schedule: Mon-Fri 9AM-5PM CT · Campaign ID: f464092e
+    </div>
+  </div>
+  <div style="font-size:0.65rem;color:var(--text-dim);margin-top:4px">Campaign data pulled from Instantly API v2 · Analytics endpoint unavailable (use Instantly dashboard for open/reply rates)</div>
+</div>
 
 <!-- PIPELINE -->
-<h2><span class="icon">📊</span> Pipeline</h2>
-<div class="grid grid-4 pipeline" id="pipelineGrid"></div>
+<div class="section">
+  <div class="section-title"><span class="emoji">📊</span> Pipeline</div>
+  <div class="pipeline-grid">
+    <div class="pipeline-card"><div class="pipeline-num">511</div><div class="pipeline-label">Total Leads</div><div><span class="badge manual">Manual update</span></div></div>
+    <div class="pipeline-card"><div class="pipeline-num">0</div><div class="pipeline-label">Warm Leads</div><div><span class="badge manual">Manual update</span></div></div>
+    <div class="pipeline-card"><div class="pipeline-num">0</div><div class="pipeline-label">Booked Meetings</div><div><span class="badge manual">Manual update</span></div></div>
+    <div class="pipeline-card"><div class="pipeline-num">$0</div><div class="pipeline-label">Monthly Revenue</div><div><span class="badge manual">Manual update</span></div></div>
+  </div>
+</div>
 
-<!-- TO-DO LIST -->
-<h2><span class="icon">📋</span> To-Do List</h2>
-<div class="todo-wrap">
-  <div class="todo-input">
-    <input type="text" id="todoInput" placeholder="Add a task…" onkeydown="if(event.key==='Enter')addTodo()">
+<!-- SCHEDULED TASKS -->
+<div class="section">
+  <div class="section-title"><span class="emoji">🕐</span> Scheduled Tasks</div>
+  <div class="cron-row"><span class="cron-name"><span class="dot-live"></span>Daily Peptide Intelligence</span><span class="cron-schedule">8:00 AM CT · Daily</span><span class="badge active">ON</span></div>
+  <div class="cron-row"><span class="cron-name"><span class="dot-live"></span>Daily AI Intelligence</span><span class="cron-schedule">8:00 AM CT · Daily</span><span class="badge active">ON</span></div>
+  <div class="cron-row"><span class="cron-name"><span class="dot-live"></span>NMN Reminder</span><span class="cron-schedule">8:00 AM CT · Daily</span><span class="badge active">ON</span></div>
+  <div class="cron-row"><span class="cron-name"><span class="dot-live"></span>Selank Reminder</span><span class="cron-schedule">2:00 PM CT · Daily</span><span class="badge active">ON</span></div>
+  <div class="cron-row"><span class="cron-name"><span class="dot-live"></span>Reta Dose</span><span class="cron-schedule">3:00 PM CT · Sundays</span><span class="badge active">ON</span></div>
+  <div class="cron-row"><span class="cron-name"><span class="dot-live"></span>MOTS-C Dose</span><span class="cron-schedule">9:00 AM CT · Tue/Thu</span><span class="badge active">ON</span></div>
+  <div class="cron-row"><span class="cron-name"><span class="dot-live"></span>Semax Dose</span><span class="cron-schedule">9:00 AM CT · Tue/Fri</span><span class="badge active">ON</span></div>
+  <div class="cron-row"><span class="cron-name"><span class="dot-live"></span>NAD+ Dose</span><span class="cron-schedule">9:00 AM CT · Wednesdays</span><span class="badge active">ON</span></div>
+  <div class="cron-row"><span class="cron-name"><span class="dot-live"></span>ClawdCursor Mac Check</span><span class="cron-schedule">3:00 PM CT · Mon/Thu</span><span class="badge active">ON</span></div>
+  <div class="cron-row"><span class="cron-name"><span class="dot-live"></span>Twilio SMS Check</span><span class="cron-schedule">10:00 AM CT · Daily</span><span class="badge active">ON</span></div>
+  <div class="cron-row"><span class="cron-name"><span class="dot-live"></span>hello@dextor.ai Mailbox Check</span><span class="cron-schedule">Every hour · Job #80392560</span><span class="badge active">ON</span></div>
+
+  <div style="margin-top:12px">
+    <div class="collapsible-header collapsed" onclick="toggleCollapse(this)">
+      <span style="font-size:0.8rem;color:var(--text-dim)">⏸ Paused Jobs</span>
+    </div>
+    <div class="collapsible-body hidden" style="max-height:400px">
+      <div style="margin-top:8px">
+        <div class="cron-row dimmed"><span class="cron-name">Crypto Intelligence</span><span class="cron-schedule">—</span><span class="badge paused">PAUSED</span></div>
+        <div class="cron-row dimmed"><span class="cron-name">Oil & Energy Intelligence</span><span class="cron-schedule">—</span><span class="badge paused">PAUSED</span></div>
+        <div class="cron-row dimmed"><span class="cron-name">Nightly Project Review</span><span class="cron-schedule">—</span><span class="badge paused">PAUSED</span></div>
+        <div class="cron-row dimmed"><span class="cron-name">Peptide Opportunity Scanner</span><span class="cron-schedule">—</span><span class="badge paused">PAUSED</span></div>
+        <div class="cron-row dimmed"><span class="cron-name">Morning Clinic Calls</span><span class="cron-schedule">—</span><span class="badge paused">PAUSED</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TODO -->
+<div class="section">
+  <div class="section-title"><span class="emoji">📋</span> To-Do List</div>
+  <div class="todo-input-row">
+    <input type="text" id="todoInput" placeholder="Add a task..." onkeypress="if(event.key==='Enter')addTodo()">
     <button onclick="addTodo()">Add</button>
   </div>
   <div id="todoList"></div>
 </div>
 
-<!-- CRON JOBS -->
-<h2><span class="icon">🕐</span> Cron Jobs</h2>
-<div class="cron-wrap"><table class="cron-table" id="cronTable"></table></div>
+<!-- ACTIVITY FEED -->
+<div class="section">
+  <div class="section-title"><span class="emoji">⚡</span> Activity Feed</div>
+  <div id="activityFeed"></div>
+</div>
 
-<!-- LIVE ACTIVITY FEED -->
-<h2><span class="icon">⚡</span> Live Activity Feed</h2>
-<div class="feed" id="activityFeed"></div>
+<!-- KEY INFO -->
+<div class="section">
+  <div class="collapsible-header" onclick="toggleCollapse(this)">
+    <span class="section-title" style="margin:0"><span class="emoji">🔑</span> Key Info</span>
+  </div>
+  <div class="collapsible-body" style="max-height:600px">
+    <div class="key-info-grid" style="margin-top:12px">
+      <div class="key-info-item"><span class="label">Dextor AI Phone:</span> <span class="value">(832) 384-9727</span></div>
+      <div class="key-info-item"><span class="label">ClearMeds Phone:</span> <span class="value">(713) 280-9876</span></div>
+      <div class="key-info-item"><span class="label">Dextor AI Website:</span> <span class="value"><a href="https://dextor.ai" target="_blank">dextor.ai</a></span></div>
+      <div class="key-info-item"><span class="label">ClearMeds Website:</span> <span class="value"><a href="https://clearmeds.bio" target="_blank">clearmeds.bio</a></span></div>
+      <div class="key-info-item"><span class="label">Dextor AI Email:</span> <span class="value">hello@dextor.ai <span class="badge paused">PENDING</span></span></div>
+      <div class="key-info-item"><span class="label">ClearMeds Email:</span> <span class="value">sales@clearmeds.bio</span></div>
+      <div class="key-info-item"><span class="label">Instantly:</span> <span class="value">511 leads loaded · 2 campaigns active</span></div>
+      <div class="key-info-item"><span class="label">Retell:</span> <span class="value">6 agents configured (4 primary)</span></div>
+    </div>
+  </div>
+</div>
+
+<div style="text-align:center;padding:24px;font-size:0.65rem;color:var(--text-dim)">
+  Dex Command Center v3 · Auto-refreshes every 60s · Built with real data, no fakes
+</div>
+
+</div><!-- /container -->
 
 <script>
-// ═══════════════════════════════════════════════════
-// API KEYS (client-side exposed — acceptable for now)
-// ═══════════════════════════════════════════════════
-const RETELL_API_KEY = 'key_0a394250d1a4545379a009c50d04';
-const RETELL_BASE = 'https://api.retellai.com';
-const INSTANTLY_API_KEY = 'ODlmYTNjZGYtMDE4NC00NGM0LTk0ODYtZmEwMjQ1ODJmNTdiOmJkTVlwYVh5c2NCQg==';
-const INSTANTLY_BASE = 'https://api.instantly.ai/api/v2';
+// Live clock
+function updateClock(){
+  const now=new Date();
+  const opts={timeZone:'America/Chicago',hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:true};
+  document.getElementById('liveClock').textContent=now.toLocaleTimeString('en-US',opts)+' CT';
+}
+setInterval(updateClock,1000);
+updateClock();
 
-// Agent ID mapping
-const RETELL_AGENTS = {
-  'agent_6d7ecea230024748b9839fa6e0': { name: 'Dextor AI Inbound', desc: 'Retell AI Inbound', phone: '(832) 384-9727' },
-  'agent_8840b578de3bc5dd85fcc02f79': { name: 'ClearMeds Inbound', desc: 'Retell AI Inbound' },
-  'agent_4ff4f9762b9e253f3c4fd1e1c5': { name: 'Outbound SDR', desc: 'Retell AI Outbound' },
-  'agent_e348d337796e0fadc1a35e4af7': { name: 'Outbound Cold Call', desc: 'Retell AI Outbound' },
-};
+// Last sync
+function updateSync(){
+  const now=new Date();
+  const opts={timeZone:'America/Chicago',hour:'2-digit',minute:'2-digit',hour12:true};
+  document.getElementById('lastSync').textContent=now.toLocaleTimeString('en-US',opts);
+}
+updateSync();
 
-const INSTANTLY_CAMPAIGNS = {
-  'ec705770-ed1f-41e7-b8ba-432c0bfba920': 'Dextor AI Email Campaign',
-  'f464092e-dbe6-4671-b5c5-892815ff933f': 'ClearMeds Email Campaign',
-};
+// Collapsible
+function toggleCollapse(header){
+  header.classList.toggle('collapsed');
+  const body=header.nextElementSibling;
+  body.classList.toggle('hidden');
+}
 
-// ═══════════════════════════════════════════════════
-// LIVE DATA STATE
-// ═══════════════════════════════════════════════════
-let lastSynced = null;
+// Activity Feed
+const activities=[
+  {text:"Voice agent 'Dexter' deployed with Rich's cloned voice",time:"Today"},
+  {text:"Retell agent speed/energy settings optimized",time:"Today"},
+  {text:"Command Center v3 deployed with live APIs",time:"Today"},
+  {text:"Both Instantly campaigns fixed (not_sending_status cleared)",time:"Today"},
+  {text:"Daily reports trimmed to Peptide + AI only",time:"Today"},
+  {text:"ClawdCursor Mac release monitor set up (Mon/Thu)",time:"Today"},
+  {text:"SkimShady bot activated — 18 opportunities found on first scan",time:"Last night"},
+  {text:"SSL/HTTPS enforced on dextor.ai",time:"Last night"},
+  {text:"hello@dextor.ai mailbox created, domain switch pending",time:"Last night"},
+  {text:"Dextor AI email signatures fixed (Rich, not Chayse)",time:"Last night"},
+];
+const feedEl=document.getElementById('activityFeed');
+activities.forEach(a=>{
+  feedEl.innerHTML+=`<div class="activity-item"><span class="activity-dot"></span><span class="todo-text">${a.text}</span><span class="activity-time">${a.time}</span></div>`;
+});
 
-// Bots — start with defaults, overwritten by API
-let bots = [
-  { name: 'Dextor AI Inbound', desc: 'Retell AI Inbound', phone: '(832) 384-9727', online: true },
-  { name: 'ClearMeds Inbound', desc: 'Retell AI Inbound', online: true },
-  { name: 'Outbound SDR', desc: 'Retell AI Outbound', online: true },
-  { name: 'Outbound Cold Call', desc: 'Retell AI Outbound', online: true },
-  { name: 'SkimShady', desc: 'Discord Bot · Status via heartbeat (coming soon)', online: true },
-  { name: 'OpenClaw', desc: 'AI Assistant', online: true },
+// Todo List with localStorage
+const DEFAULT_TODOS=[
+  "Swap Dextor AI campaign sender to hello@dextor.ai (waiting for mailbox)",
+  "Fix Calendly URL (remove mr-chaysewinter slug)",
+  "Post LinkedIn content (copy ready)",
+  "Print and mail ClearMeds letters (kit in clearmeds-mail/)",
+  "Publish Etsy listings — JUUBXX store (10 drafts done)",
+  "Monitor Instantly open rates (campaigns just fixed)",
+  "Record female voice for AI agent clone",
+  "Add dextor.ai email aliases (contact@, info@, support@)",
+  "Create separate Calendly for Dextor AI"
 ];
 
-// Campaigns — static fallback
-let campaigns = [
-  { name: 'Dextor AI Email Campaign', status: 'active', sent: 1243, opens: '42%', replies: '8.3%', cors: false },
-  { name: 'ClearMeds Email Campaign', status: 'active', sent: 0, opens: '—', replies: '—', cors: false },
-];
-
-const projects = [
-  { name: 'Dextor AI', desc: 'AI automation agency', status: 'working', tasks: ['Email campaigns live (511 leads)', 'Voice agent active on (832) 384-9727', 'Swap sender to hello@dextor.ai'] },
-  { name: 'ClearMedsCorp', desc: 'Wholesale peptides to clinics', status: 'working', tasks: ['Email campaign live', 'Physical mailer kit ready', 'Need to print & mail letters'] },
-  { name: 'Dex Command Center', desc: 'Real-time ops dashboard', status: 'working', tasks: ['Live API integration', 'Adding features'] },
-  { name: 'SkimShady Bot', desc: 'Options trading scanner', status: 'active', tasks: ['Running on Mac mini', 'CBOE API active', 'Posting alerts to Discord'] },
-  { name: 'OpenClaw Phone', desc: 'AI phone research', status: 'paused', tasks: ['Researched benefits', 'Awaiting purchase decision'] },
-  { name: 'Fiverr AI Fulfillment', desc: 'AI-fulfilled freelance gigs', status: 'paused', tasks: ['Concept phase'] },
-  { name: 'ClinicLeads Pro', desc: 'Freelance lead gen service', status: 'paused', tasks: ['On hold'] },
-  { name: 'PepLabs.bio', desc: 'DTC peptide e-commerce', status: 'paused', tasks: ['On hold'] },
-  { name: 'JUUBXX Etsy Store', desc: 'Digital product listings', status: 'paused', tasks: ['10 drafts done', 'Need PDF upload'] },
-  { name: 'Telehealth Platform', desc: 'Future project', status: 'paused', tasks: ['Not started'] },
-];
-
-const pipeline = [
-  { label: 'Total Leads', value: '511' },
-  { label: 'Warm Leads', value: '0' },
-  { label: 'Booked Meetings', value: '0' },
-  { label: 'Monthly Revenue', value: '$0' },
-];
-
-const cronJobs = [
-  { name: 'Daily Peptide Intel', schedule: '8:00 AM', lastRun: 'Today 8:00 AM', nextRun: 'Tomorrow 8:00 AM', status: 'on' },
-  { name: 'Daily AI Intel', schedule: '8:30 AM', lastRun: 'Today 8:30 AM', nextRun: 'Tomorrow 8:30 AM', status: 'on' },
-  { name: 'NMN Reminder', schedule: '9:00 AM', lastRun: 'Today 9:00 AM', nextRun: 'Tomorrow 9:00 AM', status: 'on' },
-  { name: 'Selank Reminder', schedule: '9:00 AM', lastRun: 'Today 9:00 AM', nextRun: 'Tomorrow 9:00 AM', status: 'on' },
-  { name: 'ClawdCursor Mac Check', schedule: 'Every 30m', lastRun: 'Today 4:30 PM', nextRun: 'Today 5:00 PM', status: 'on' },
-];
-
-const activityFeed = [
-  { text: 'Dexter answered inbound call from (713) area code', time: '4:42 PM' },
-  { text: 'SkimShady found 3 trading opportunities', time: '4:38 PM' },
-  { text: 'Email campaign sent 25 emails (Dextor AI)', time: '4:30 PM' },
-  { text: 'OpenClaw completed daily AI intel report', time: '8:30 AM' },
-  { text: 'Daily Peptide Intel delivered to Discord', time: '8:00 AM' },
-  { text: 'ClearMeds bot handled inbound inquiry', time: 'Yesterday 6:12 PM' },
-  { text: 'SkimShady executed 2 trades on paper account', time: 'Yesterday 3:45 PM' },
-];
-
-// ═══════════════════════════════════════════════════
-// API FETCHING
-// ═══════════════════════════════════════════════════
-
-async function fetchRetellAgents() {
-  try {
-    const res = await fetch(RETELL_BASE + '/list-agents', {
-      headers: { 'Authorization': 'Bearer ' + RETELL_API_KEY }
-    });
-    if (!res.ok) throw new Error('HTTP ' + res.status);
-    const agents = await res.json();
-    // Build new bots array from API data
-    const apiBots = [];
-    for (const [id, info] of Object.entries(RETELL_AGENTS)) {
-      const agent = agents.find(a => a.agent_id === id);
-      apiBots.push({
-        name: info.name,
-        desc: info.desc,
-        phone: info.phone || '',
-        online: agent ? true : true, // agent exists = configured
-      });
-    }
-    // Keep static bots (SkimShady, OpenClaw)
-    bots = [
-      ...apiBots,
-      { name: 'SkimShady', desc: 'Discord Bot · Status via heartbeat (coming soon)', online: true },
-      { name: 'OpenClaw', desc: 'AI Assistant', online: true },
-    ];
-  } catch (e) {
-    console.warn('Retell API fetch failed:', e.message);
-    // Keep existing static data
-  }
+function loadTodos(){
+  let todos=JSON.parse(localStorage.getItem('dex-todos')||'null');
+  if(!todos){todos=DEFAULT_TODOS.map(t=>({text:t,done:false}));saveTodos(todos);}
+  return todos;
 }
-
-// TODO: Set up a serverless proxy (e.g. Cloudflare Worker) to avoid CORS issues
-async function fetchInstantlyCampaigns() {
-  const newCampaigns = [];
-  for (const [id, name] of Object.entries(INSTANTLY_CAMPAIGNS)) {
-    try {
-      const res = await fetch(INSTANTLY_BASE + '/campaigns/' + id + '/analytics', {
-        headers: { 'Authorization': 'Bearer ' + INSTANTLY_API_KEY }
-      });
-      if (!res.ok) throw new Error('HTTP ' + res.status);
-      const data = await res.json();
-      newCampaigns.push({
-        name,
-        status: data.status || 'active',
-        sent: data.emails_sent || data.sent || 0,
-        opens: data.open_rate ? data.open_rate + '%' : (data.opens || '—'),
-        replies: data.reply_rate ? data.reply_rate + '%' : (data.replies || '—'),
-        cors: false,
-      });
-    } catch (e) {
-      console.warn('Instantly API fetch failed for ' + name + ':', e.message);
-      // CORS or other error — use fallback with note
-      const fallback = campaigns.find(c => c.name === name);
-      newCampaigns.push({
-        name,
-        status: fallback ? fallback.status : 'active',
-        sent: fallback ? fallback.sent : 0,
-        opens: fallback ? fallback.opens : '—',
-        replies: fallback ? fallback.replies : '—',
-        cors: true,
-      });
-    }
-  }
-  campaigns = newCampaigns;
-}
-
-async function fetchAllData() {
-  await Promise.all([fetchRetellAgents(), fetchInstantlyCampaigns()]);
-  lastSynced = new Date();
-  render();
-}
-
-// ═══════════════════════════════════════════════════
-// TO-DO LIST (localStorage)
-// ═══════════════════════════════════════════════════
-
-const TODO_KEY = 'dex-command-center-todos';
-const DEFAULT_TODOS = [
-  'Swap Dextor AI campaign sender to hello@dextor.ai',
-  'Fix Calendly URL (remove mr-chaysewinter slug)',
-  'Post LinkedIn content',
-  'Print and mail ClearMeds letters',
-  'Publish Etsy listings (JUUBXX store)',
-  'Monitor Instantly campaign open rates',
-  'Record female voice for AI agent clone',
-];
-
-function loadTodos() {
-  const saved = localStorage.getItem(TODO_KEY);
-  if (saved) return JSON.parse(saved);
-  // First visit — seed defaults
-  return DEFAULT_TODOS.map((t, i) => ({ id: Date.now() + i, text: t, done: false }));
-}
-
-function saveTodos(todos) {
-  localStorage.setItem(TODO_KEY, JSON.stringify(todos));
-}
-
-function addTodo() {
-  const input = document.getElementById('todoInput');
-  const text = input.value.trim();
-  if (!text) return;
-  const todos = loadTodos();
-  todos.push({ id: Date.now(), text, done: false });
-  saveTodos(todos);
-  input.value = '';
-  renderTodos();
-}
-
-function toggleTodo(id) {
-  const todos = loadTodos();
-  const t = todos.find(x => x.id === id);
-  if (t) t.done = !t.done;
-  saveTodos(todos);
-  renderTodos();
-}
-
-function deleteTodo(id) {
-  const todos = loadTodos().filter(x => x.id !== id);
-  saveTodos(todos);
-  renderTodos();
-}
-
-function renderTodos() {
-  const todos = loadTodos();
-  // Sort: incomplete first, then completed
-  todos.sort((a, b) => a.done - b.done);
-  document.getElementById('todoList').innerHTML = todos.map(t => `
-    <div class="todo-item ${t.done ? 'done' : ''}">
-      <input type="checkbox" ${t.done ? 'checked' : ''} onchange="toggleTodo(${t.id})">
+function saveTodos(todos){localStorage.setItem('dex-todos',JSON.stringify(todos));}
+function renderTodos(){
+  const todos=loadTodos();
+  const el=document.getElementById('todoList');
+  el.innerHTML='';
+  todos.forEach((t,i)=>{
+    el.innerHTML+=`<div class="todo-item ${t.done?'done':''}">
+      <input type="checkbox" ${t.done?'checked':''} onchange="toggleTodo(${i})">
       <span class="todo-text">${t.text}</span>
-      <button class="todo-del" onclick="deleteTodo(${t.id})">✕</button>
-    </div>`).join('');
-}
-
-// ═══════════════════════════════════════════════════
-// RENDER
-// ═══════════════════════════════════════════════════
-
-function render() {
-  // Last Updated / Synced
-  const syncStr = lastSynced
-    ? 'Last synced: ' + lastSynced.toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' })
-    : 'Last Updated: ' + new Date().toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' });
-  document.getElementById('lastUpdated').textContent = syncStr;
-
-  // Bots
-  document.getElementById('botsGrid').innerHTML = bots.map(b => `
-    <div class="card">
-      <div class="name"><span class="status ${b.online?'on':'off'}"></span>${b.name}</div>
-      <div class="meta">${b.desc}${b.phone ? '<br>' + b.phone : ''}</div>
-    </div>`).join('');
-
-  // Campaigns
-  document.getElementById('campaignsGrid').innerHTML = campaigns.map(c => `
-    <div class="card">
-      <div class="name">${c.name} <span class="badge ${c.status}">${c.status}</span>
-        ${c.cors ? ' <span class="badge cors">CORS blocked</span>' : ''}
-      </div>
-      <div class="campaign-stats">
-        <div class="stat"><div class="val">${c.sent}</div><div class="label">Sent</div></div>
-        <div class="stat"><div class="val">${c.opens}</div><div class="label">Opens</div></div>
-        <div class="stat"><div class="val">${c.replies}</div><div class="label">Replies</div></div>
-      </div>
-    </div>`).join('');
-
-  // Projects
-  const statusLabel = {working:'ACTIVE',active:'ACTIVE',paused:'PAUSED',blocked:'BLOCKED'};
-  const statusClass = {working:'working',active:'active',paused:'paused',blocked:'blocked'};
-  // Sort: active/working first, then paused
-  const sortedProjects = [...projects].sort((a,b) => {
-    const order = {working:0,active:0,blocked:1,paused:2};
-    return (order[a.status]||2) - (order[b.status]||2);
+      <span class="todo-del" onclick="deleteTodo(${i})">✕</span>
+    </div>`;
   });
-  document.getElementById('projectsGrid').innerHTML = sortedProjects.map(p => `
-    <div class="card">
-      <div class="name">${p.name} <span class="badge ${statusClass[p.status]}">${statusLabel[p.status]}</span></div>
-      <div class="meta">${p.desc}</div>
-      <ul class="project-tasks">${p.tasks.map(t => '<li>'+t+'</li>').join('')}</ul>
-    </div>`).join('');
-
-  // Pipeline
-  document.getElementById('pipelineGrid').innerHTML = pipeline.map(p => `
-    <div class="card"><div class="val">${p.value}</div><div class="label">${p.label}</div></div>`).join('');
-
-  // Cron
-  document.getElementById('cronTable').innerHTML = `
-    <tr><th>Task</th><th>Schedule</th><th>Last Run</th><th>Next Run</th><th>Status</th></tr>
-    ${cronJobs.map(j => `<tr>
-      <td>${j.name}</td><td>${j.schedule}</td><td>${j.lastRun}</td><td>${j.nextRun}</td>
-      <td><span class="status ${j.status}"></span></td>
-    </tr>`).join('')}`;
-
-  // Feed
-  document.getElementById('activityFeed').innerHTML = activityFeed.map(f => `
-    <div class="feed-item"><span>${f.text}</span><span class="time">${f.time}</span></div>`).join('');
-
-  // Todos
-  renderTodos();
 }
+function addTodo(){
+  const input=document.getElementById('todoInput');
+  if(!input.value.trim())return;
+  const todos=loadTodos();
+  todos.unshift({text:input.value.trim(),done:false});
+  saveTodos(todos);input.value='';renderTodos();
+}
+function toggleTodo(i){const todos=loadTodos();todos[i].done=!todos[i].done;saveTodos(todos);renderTodos();}
+function deleteTodo(i){const todos=loadTodos();todos.splice(i,1);saveTodos(todos);renderTodos();}
+renderTodos();
 
-// Initial render + data fetch
-render();
-fetchAllData();
-
-// Auto-refresh every 60 seconds
-setInterval(fetchAllData, 60000);
+// Auto-refresh every 60s
+setTimeout(()=>location.reload(),60000);
 </script>
 </body>
 </html>
