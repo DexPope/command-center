@@ -145,32 +145,39 @@ a:hover{text-decoration:underline}
   <div class="grid-2">
     <div class="card">
       <div class="project-name">Dextor AI <span class="badge active">ACTIVE</span></div>
-      <div class="project-desc">AI automation agency</div>
+      <div class="project-desc">AI automation agency — voice agents, chatbots, email/SMS automation</div>
       <ul class="project-tasks">
         <li>Email campaigns live (511 leads in Instantly)</li>
-        <li>Voice agent "Dexter" active — (832) 384-9727, Rich's cloned voice</li>
-        <li>Waiting for hello@dextor.ai mailbox to go live</li>
-        <li>Need to swap sender from sales@clearmeds.bio → hello@dextor.ai</li>
+        <li>Voice agent "Lina" active — (832) 384-9727, custom female voice clone v28</li>
+        <li>hello@dextor.ai mailbox live (Microsoft 365), hourly check cron</li>
+        <li>SPF updated — pending confirmation in GoDaddy</li>
+        <li>Meta ads strategy built — ready to launch on command</li>
+        <li>Need to swap Instantly sender → hello@dextor.ai</li>
       </ul>
-      <div class="project-meta">Last activity: Feb 28, 2026</div>
+      <div class="project-meta">Last activity: Mar 1, 2026</div>
     </div>
     <div class="card">
       <div class="project-name">ClearMedsCorp <span class="badge active">ACTIVE</span></div>
-      <div class="project-desc">Wholesale peptides — domestic manufacturer</div>
+      <div class="project-desc">Wholesale peptides — domestic manufacturer, no tariffs</div>
       <ul class="project-tasks">
-        <li>Email campaign live in Instantly</li>
+        <li>Email campaign live in Instantly (as Chayse Winter)</li>
         <li>Physical mailer kit ready (not yet mailed)</li>
-        <li>DNS/email fixed 2/27</li>
+        <li>DNS/email fixed 2/27 · Warmup score 100</li>
+        <li>Meta ads strategy built — ready to launch on command</li>
+        <li>10-unit sample program active</li>
       </ul>
-      <div class="project-meta">Last activity: Feb 28, 2026</div>
+      <div class="project-meta">Last activity: Mar 1, 2026</div>
     </div>
     <div class="card">
-      <div class="project-name">Dex Command Center <span class="badge active">ACTIVE</span></div>
-      <div class="project-desc">Operational dashboard — this page</div>
+      <div class="project-name">Polymarket Auto-Trader <span class="badge active">ACTIVE</span></div>
+      <div class="project-desc">Temporal arbitrage bot — crypto prediction markets</div>
       <ul class="project-tasks">
-        <li>Building out live data integration</li>
+        <li>Full Node.js bot built — temporal arb, spread trading, news detection</li>
+        <li>Paper mode running — $500 paper balance</li>
+        <li>CoinGecko price feed (BTC/ETH/SOL every 10s)</li>
+        <li>Waiting on Coinbase USDC to fund wallet for live trading</li>
       </ul>
-      <div class="project-meta">Last activity: Feb 28, 2026</div>
+      <div class="project-meta">Last activity: Mar 1, 2026</div>
     </div>
     <div class="card">
       <div class="project-name">SkimShady Bot <span class="badge active">ACTIVE</span></div>
@@ -180,7 +187,26 @@ a:hover{text-decoration:underline}
         <li>Scans 9:30 CT, monitors hourly 10-4 CT</li>
         <li>Posting to Discord</li>
       </ul>
-      <div class="project-meta">Last activity: Feb 28, 2026</div>
+      <div class="project-meta">Last activity: Mar 1, 2026</div>
+    </div>
+    <div class="card">
+      <div class="project-name">AskPope Bot <span class="badge active">ACTIVE</span></div>
+      <div class="project-desc">Discord Q&A research bot — #ask-pope channel</div>
+      <ul class="project-tasks">
+        <li>Online as AskPope#8778 in Discord</li>
+        <li>Per-user conversation history (last 10 messages)</li>
+        <li>Uses OpenClaw gateway chat completions</li>
+        <li>launchd daemon for auto-restart</li>
+      </ul>
+      <div class="project-meta">Last activity: Mar 1, 2026</div>
+    </div>
+    <div class="card">
+      <div class="project-name">Dex Command Center <span class="badge active">ACTIVE</span></div>
+      <div class="project-desc">Operational dashboard — this page</div>
+      <ul class="project-tasks">
+        <li>Updated Mar 1, 2026 with all current projects</li>
+      </ul>
+      <div class="project-meta">Last activity: Mar 1, 2026</div>
     </div>
   </div>
 
@@ -205,14 +231,16 @@ a:hover{text-decoration:underline}
 <div class="section">
   <div class="section-title"><span class="emoji">🤖</span> Bots & Agents</div>
   <div id="botsContainer">
-    <div class="bot-row"><span class="dot-live" id="dot-dexter"></span><span class="bot-name">Dexter (Inbound Discovery)</span><span class="bot-type">Retell AI</span><span class="bot-info">(832) 384-9727 · Voice: Rich Winz clone</span></div>
-    <div class="bot-row"><span class="dot-live" id="dot-clearmeds"></span><span class="bot-name">ClearMeds Inbound Sales</span><span class="bot-type">Retell AI</span><span class="bot-info">Custom voice · Coffee shop ambiance</span></div>
-    <div class="bot-row"><span class="dot-unknown" id="dot-sdr"></span><span class="bot-name">Dextor AI Outbound SDR</span><span class="bot-type">Retell AI</span><span class="bot-info">Adrian voice · 3-min max calls</span></div>
-    <div class="bot-row"><span class="dot-unknown" id="dot-cold"></span><span class="bot-name">Dextor AI Outbound Cold Call</span><span class="bot-type">Retell AI</span><span class="bot-info">Adrian voice · High responsiveness</span></div>
-    <div class="bot-row"><span class="dot-live"></span><span class="bot-name">SkimShady</span><span class="bot-type">Discord Bot</span><span class="bot-info">Scans 9:30 CT · Monitors hourly 10-4 CT</span></div>
-    <div class="bot-row"><span class="dot-live"></span><span class="bot-name">Dex Bot (OpenClaw)</span><span class="bot-type">AI Assistant</span><span class="bot-info">Always on · Multi-channel</span></div>
+    <div class="bot-row"><span class="dot-live" id="dot-lina"></span><span class="bot-name">Lina — Main Inbound</span><span class="bot-type">Retell AI</span><span class="bot-info">(832) 384-9727 · Custom female voice clone v28 · Temp 1.0, Speed 1.05</span></div>
+    <div class="bot-row"><span class="dot-live" id="dot-lina-sdr"></span><span class="bot-name">Lina — Outbound SDR</span><span class="bot-type">Retell AI</span><span class="bot-info">Same Lina voice · Cold call script · 3-min max</span></div>
+    <div class="bot-row"><span class="dot-live" id="dot-lina-cold"></span><span class="bot-name">Lina — Outbound Cold Call</span><span class="bot-type">Retell AI</span><span class="bot-info">Same Lina voice · High responsiveness</span></div>
+    <div class="bot-row"><span class="dot-unknown" id="dot-discovery"></span><span class="bot-name">Inbound Discovery (Legacy)</span><span class="bot-type">Retell AI</span><span class="bot-info">Original agent · Standby</span></div>
+    <div class="bot-row"><span class="dot-live"></span><span class="bot-name">SkimShady</span><span class="bot-type">Discord Bot</span><span class="bot-info">Options scanner · CBOE API · Scans 9:30 CT</span></div>
+    <div class="bot-row"><span class="dot-live"></span><span class="bot-name">AskPope</span><span class="bot-type">Discord Bot</span><span class="bot-info">#ask-pope · Q&A research · Per-user memory</span></div>
+    <div class="bot-row"><span class="dot-live"></span><span class="bot-name">Polymarket Trader</span><span class="bot-type">Node.js Bot</span><span class="bot-info">Paper mode · Temporal arb + spread + news</span></div>
+    <div class="bot-row"><span class="dot-live"></span><span class="bot-name">Dex Bot (OpenClaw)</span><span class="bot-type">AI Assistant</span><span class="bot-info">Always on · Discord · Multi-channel</span></div>
   </div>
-  <div style="font-size:0.65rem;color:var(--text-dim);margin-top:8px">Retell agent status verified via API · <span id="retellAgentCount">6</span> agents found · Last check: <span id="retellLastCheck">page load</span></div>
+  <div style="font-size:0.65rem;color:var(--text-dim);margin-top:8px">8 bots/agents active · All Retell agents using Lina voice clone · Last update: Mar 1, 2026</div>
 </div>
 
 <!-- EMAIL CAMPAIGNS -->
@@ -314,16 +342,18 @@ a:hover{text-decoration:underline}
       <div class="key-info-item"><span class="label">ClearMeds Phone:</span> <span class="value">(713) 280-9876</span></div>
       <div class="key-info-item"><span class="label">Dextor AI Website:</span> <span class="value"><a href="https://dextor.ai" target="_blank">dextor.ai</a></span></div>
       <div class="key-info-item"><span class="label">ClearMeds Website:</span> <span class="value"><a href="https://clearmeds.bio" target="_blank">clearmeds.bio</a></span></div>
-      <div class="key-info-item"><span class="label">Dextor AI Email:</span> <span class="value">hello@dextor.ai <span class="badge paused">PENDING</span></span></div>
+      <div class="key-info-item"><span class="label">Dextor AI Email:</span> <span class="value">hello@dextor.ai <span class="badge active">LIVE</span></span></div>
       <div class="key-info-item"><span class="label">ClearMeds Email:</span> <span class="value">sales@clearmeds.bio</span></div>
       <div class="key-info-item"><span class="label">Instantly:</span> <span class="value">511 leads loaded · 2 campaigns active</span></div>
-      <div class="key-info-item"><span class="label">Retell:</span> <span class="value">6 agents configured (4 primary)</span></div>
+      <div class="key-info-item"><span class="label">Retell:</span> <span class="value">4 agents (3 Lina, 1 legacy) · Voice v28</span></div>
+      <div class="key-info-item"><span class="label">Polymarket Wallet:</span> <span class="value">0xeeeC...fDF93 (Polygon)</span></div>
+      <div class="key-info-item"><span class="label">Meta Ads:</span> <span class="value">Strategy ready for both businesses · Not launched</span></div>
     </div>
   </div>
 </div>
 
 <div style="text-align:center;padding:24px;font-size:0.65rem;color:var(--text-dim)">
-  Dex Command Center v3 · Auto-refreshes every 60s · Built with real data, no fakes
+  Dex Command Center v4 · Updated Mar 1, 2026 · Auto-refreshes every 60s · Real data only
 </div>
 
 </div><!-- /container -->
@@ -355,16 +385,18 @@ function toggleCollapse(header){
 
 // Activity Feed
 const activities=[
-  {text:"Voice agent 'Dexter' deployed with Rich's cloned voice",time:"Today"},
-  {text:"Retell agent speed/energy settings optimized",time:"Today"},
-  {text:"Command Center v3 deployed with live APIs",time:"Today"},
-  {text:"Both Instantly campaigns fixed (not_sending_status cleared)",time:"Today"},
-  {text:"Daily reports trimmed to Peptide + AI only",time:"Today"},
-  {text:"ClawdCursor Mac release monitor set up (Mon/Thu)",time:"Today"},
-  {text:"SkimShady bot activated — 18 opportunities found on first scan",time:"Last night"},
-  {text:"SSL/HTTPS enforced on dextor.ai",time:"Last night"},
-  {text:"hello@dextor.ai mailbox created, domain switch pending",time:"Last night"},
-  {text:"Dextor AI email signatures fixed (Rich, not Chayse)",time:"Last night"},
+  {text:"Meta ads strategy built for Dextor AI + ClearMeds — ready to launch",time:"Mar 1"},
+  {text:"Polymarket auto-trader built (Node.js) — paper trading active",time:"Mar 1"},
+  {text:"AskPope Discord bot deployed — #ask-pope channel live",time:"Mar 1"},
+  {text:"Command Center updated to v4 with all current projects",time:"Mar 1"},
+  {text:"Voice agent 'Lina' finalized at v28 — all 3 agents using custom female clone",time:"Feb 28"},
+  {text:"SPF record updated for dextor.ai (pending GoDaddy confirmation)",time:"Feb 28"},
+  {text:"hello@dextor.ai mailbox live on Microsoft 365 + hourly check cron",time:"Feb 28"},
+  {text:"Both Instantly campaigns fixed (not_sending_status cleared)",time:"Feb 28"},
+  {text:"Daily reports trimmed to Peptide + AI only",time:"Feb 28"},
+  {text:"SkimShady bot activated — CBOE options scanner",time:"Feb 27"},
+  {text:"SSL/HTTPS enforced on dextor.ai",time:"Feb 27"},
+  {text:"ClearMeds DNS fixed — SPF, DKIM, DMARC all configured",time:"Feb 27"},
 ];
 const feedEl=document.getElementById('activityFeed');
 activities.forEach(a=>{
@@ -373,14 +405,15 @@ activities.forEach(a=>{
 
 // Todo List with localStorage
 const DEFAULT_TODOS=[
-  "Swap Dextor AI campaign sender to hello@dextor.ai (waiting for mailbox)",
+  "Confirm SPF record save in GoDaddy (click Yes, Confirm)",
+  "Add hello@dextor.ai to Instantly + swap Dextor AI campaign sender",
+  "Set up DKIM for dextor.ai",
   "Fix Calendly URL (remove mr-chaysewinter slug)",
-  "Post LinkedIn content (copy ready)",
+  "Fund Polymarket wallet with USDC (Coinbase → Polygon)",
   "Print and mail ClearMeds letters (kit in clearmeds-mail/)",
-  "Publish Etsy listings — JUUBXX store (10 drafts done)",
-  "Monitor Instantly open rates (campaigns just fixed)",
-  "Record female voice for AI agent clone",
-  "Add dextor.ai email aliases (contact@, info@, support@)",
+  "Launch Meta ads when ready (strategies built for both businesses)",
+  "Add more Instantly sending accounts (currently 1 at 20/day)",
+  "Monitor Instantly open rates",
   "Create separate Calendly for Dextor AI"
 ];
 
