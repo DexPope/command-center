@@ -32,6 +32,11 @@ h2 .icon{font-size:1rem}
 .badge.active{background:#22c55e22;color:var(--green);border:1px solid #22c55e44}
 .badge.paused{background:#eab30822;color:var(--yellow);border:1px solid #eab30844}
 .badge.cors{background:#ef444422;color:var(--red);border:1px solid #ef444444;font-size:.55rem}
+.badge.working{background:#00e5ff22;color:var(--cyan);border:1px solid #00e5ff44;animation:pulse 2s infinite}
+.badge.blocked{background:#ef444422;color:var(--red);border:1px solid #ef444444}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
+.project-tasks{margin-top:.5rem;font-size:.7rem;color:var(--text-dim)}
+.project-tasks li{margin-left:1rem;margin-bottom:.15rem;list-style:disc}
 .campaign-stats{display:flex;gap:1rem;margin-top:.6rem;flex-wrap:wrap}
 .campaign-stats .stat{text-align:center}
 .campaign-stats .stat .val{font-size:1.1rem;font-weight:600;color:var(--cyan)}
@@ -83,6 +88,10 @@ h2 .icon{font-size:1rem}
 <!-- CAMPAIGNS -->
 <h2><span class="icon">📧</span> Campaigns</h2>
 <div class="grid grid-2" id="campaignsGrid"></div>
+
+<!-- PROJECTS -->
+<h2><span class="icon">🚀</span> Projects</h2>
+<div class="grid grid-2" id="projectsGrid"></div>
 
 <!-- PIPELINE -->
 <h2><span class="icon">📊</span> Pipeline</h2>
@@ -147,6 +156,19 @@ let bots = [
 let campaigns = [
   { name: 'Dextor AI Email Campaign', status: 'active', sent: 1243, opens: '42%', replies: '8.3%', cors: false },
   { name: 'ClearMeds Email Campaign', status: 'active', sent: 0, opens: '—', replies: '—', cors: false },
+];
+
+const projects = [
+  { name: 'Dextor AI', desc: 'AI automation agency', status: 'working', tasks: ['Email campaigns live (511 leads)', 'Voice agent active on (832) 384-9727', 'Swap sender to hello@dextor.ai'] },
+  { name: 'ClearMedsCorp', desc: 'Wholesale peptides to clinics', status: 'working', tasks: ['Email campaign live', 'Physical mailer kit ready', 'Need to print & mail letters'] },
+  { name: 'Dex Command Center', desc: 'Real-time ops dashboard', status: 'working', tasks: ['Live API integration', 'Adding features'] },
+  { name: 'SkimShady Bot', desc: 'Options trading scanner', status: 'active', tasks: ['Running on Mac mini', 'CBOE API active', 'Posting alerts to Discord'] },
+  { name: 'OpenClaw Phone', desc: 'AI phone research', status: 'paused', tasks: ['Researched benefits', 'Awaiting purchase decision'] },
+  { name: 'Fiverr AI Fulfillment', desc: 'AI-fulfilled freelance gigs', status: 'paused', tasks: ['Concept phase'] },
+  { name: 'ClinicLeads Pro', desc: 'Freelance lead gen service', status: 'paused', tasks: ['On hold'] },
+  { name: 'PepLabs.bio', desc: 'DTC peptide e-commerce', status: 'paused', tasks: ['On hold'] },
+  { name: 'JUUBXX Etsy Store', desc: 'Digital product listings', status: 'paused', tasks: ['10 drafts done', 'Need PDF upload'] },
+  { name: 'Telehealth Platform', desc: 'Future project', status: 'paused', tasks: ['Not started'] },
 ];
 
 const pipeline = [
@@ -341,6 +363,21 @@ function render() {
         <div class="stat"><div class="val">${c.opens}</div><div class="label">Opens</div></div>
         <div class="stat"><div class="val">${c.replies}</div><div class="label">Replies</div></div>
       </div>
+    </div>`).join('');
+
+  // Projects
+  const statusLabel = {working:'ACTIVE',active:'ACTIVE',paused:'PAUSED',blocked:'BLOCKED'};
+  const statusClass = {working:'working',active:'active',paused:'paused',blocked:'blocked'};
+  // Sort: active/working first, then paused
+  const sortedProjects = [...projects].sort((a,b) => {
+    const order = {working:0,active:0,blocked:1,paused:2};
+    return (order[a.status]||2) - (order[b.status]||2);
+  });
+  document.getElementById('projectsGrid').innerHTML = sortedProjects.map(p => `
+    <div class="card">
+      <div class="name">${p.name} <span class="badge ${statusClass[p.status]}">${statusLabel[p.status]}</span></div>
+      <div class="meta">${p.desc}</div>
+      <ul class="project-tasks">${p.tasks.map(t => '<li>'+t+'</li>').join('')}</ul>
     </div>`).join('');
 
   // Pipeline
